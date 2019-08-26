@@ -1,0 +1,21 @@
+[bootstrap]
+main_collection = /main/main.collectionc
+
+[script]
+shared_state = 1
+
+[android]
+input_method = HiddenInputField
+
+[project]
+title = gamePlayground
+
+[display]
+width = 1408
+height = 640
+fullscreen = 1
+
+[physics]
+scale = 0.02
+gravity_y = -100.0
+
