@@ -6,6 +6,10 @@ key_trigger {
   input: KEY_RIGHT
   action: "player_right"
 }
+key_trigger {
+  input: KEY_UP
+  action: "player_jump"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "touch"
@@ -21,4 +25,8 @@ gamepad_trigger {
 touch_trigger {
   input: TOUCH_MULTI
   action: "on_touch"
+}
+touch_trigger {
+  input: TOUCH_MULTI
+  action: "secondary_touch"
 }

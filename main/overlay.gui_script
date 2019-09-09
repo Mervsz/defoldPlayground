@@ -18,20 +18,22 @@ function on_message(self, message_id, message, sender)
 end
 
 function on_input(self, action_id, action)
-		local id = nil
+	local id = nil
+	if action_id == hash("on_touch") then 
+		for i, pos in ipairs(action.touch) do
+			print("position", pos.id)
+				if gui.pick_node(gui.get_node("right"), pos.x, pos.y) then
+					id = hash("move_right")
+				elseif gui.pick_node(gui.get_node("left"), pos.x, pos.y) then
+					id = hash("move_left")
+				elseif gui.pick_node(gui.get_node("jump"), pos.x, pos.y) then
+					id = hash("player_jump")
+				end
 
-		if action_id == hash("on_touch") then
-			if gui.pick_node(gui.get_node("title"), action.x, action.y) then
-			id = hash("move_right")
+			if id then
+				msg.post("/player", id, {})
 			end
 		end
-		
-		if id then
-			msg.post("/player", id, {})
-		end
-end
+	end
 
-function on_reload(self)
-	-- Add input-handling code here
-	-- Remove this function if not needed
 end

@@ -4,9 +4,12 @@ function init(self)
 	self.dir = vmath.vector3(1,0,0)
 	self.speed = 90
 	self.decceleration = -200
-	self.isMoving = false
+	self.VMove = false
+	self.HJump = false
 	self.input = vmath.vector3()
 	self.velocity = vmath.vector3()
+
+	self.jump_factor = vmath.vector3(0,0,0)
 
 	print("intialized player")
 	
@@ -42,34 +45,47 @@ end
 
 function update(self, dt)
 	local pos = go.get_position()
+	local acc = vmath.vector3(0,0,0)
 	
 	if vmath.length(self.input) > 0  then
-		self.isMoving = true
 		self.input = vmath.normalize(self.input)
 	end
-	
-	
-	
-	if self.isMoving == true then
-	local accel = movement(self, dt, "start")
-	go.set_position(pos + accel)
+
+	if self.HJump == true then
+		self.jump_factor = vmath.vector3(0,10,0)
 	else
-		if vmath.length(self.velocity) > 1 then
-			print("ongoing to stop")
-			local deccel = movement(self, dt, "stopped")
-			go.set_position(pos + deccel)
+		self.jump_factor = vmath.vector3(0,0,0)
+	end
+	
+	if self.VMove == true then
+	acc = movement(self, dt, "start")
+	
+	else
+		-- print("check velocity", vmath.length(self.velocity))
+		if self.velocity.x > 5 or self.velocity.x < -5 then
+			-- print("ongoing to stop")
+			acc = movement(self, dt, "stopped")
 		else
 			self.velocity = vmath.vector3()
 			
 		end
 	end
+	go.set_position(pos + acc + self.jump_factor)
 	self.input = vmath.vector3()
-	self.isMoving = false
+	self.VMove = false
+	self.HJump = false
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("move_right") or message_id == hash("touch_test") then
+		self.VMove = true
 		self.input.x = 1
+	elseif message_id == hash("move_left") or message_id == hash("touch_test") then
+		self.VMove = true
+		self.input.x = -1
+	elseif message_id == hash("player_jump") then
+		self.HJump = true
+		self.input.y = 1
 	-- elseif message_id == hash("player_left") or message_id == hash("gamepad_left") then
 	-- 	self.input.x = -2
 	end
@@ -78,11 +94,13 @@ end
 function on_input(self, action_id, action)
 
 	
--- 	if action_id == hash("player_right") or action_id == hash("touch_test") then
--- 		self.input.x = 2
--- 	elseif action_id == hash("player_left") or action_id == hash("gamepad_left") then
--- 		self.input.x = -2
--- 	end
+	if action_id == hash("player_right") or action_id == hash("touch_test") then
+		self.VMove = true
+	self.input.x = 2
+	elseif action_id == hash("player_jump") or action_id == hash("gamepad_left") then
+	self.HJump = true
+	self.input.y = 1
+	end
 -- 
 -- 	if vmath.length(self.input) > 0 then
 -- 		self.isMoving = true
